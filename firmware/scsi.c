@@ -11,6 +11,7 @@
 
 #define VENDOR_BOOT						0xBF
 #define VENDOR_INFO						0x05
+#define VENDOR_CHIPID					0x56
 #define CUSTOM_XPEEK					0x06
 #define CUSTOM_XPOKE					0x07
 #define CUSTOM_IPEEK					0x08
@@ -113,16 +114,46 @@ BYTE HandleCDB()
 					SendData1(1, 0);
 					break;
 				}
+				case VENDOR_CHIPID:
+				{
+					int i;
+					memset(usb_buffer, 0x00, 0x200);
+					
+					//Set raw command mode
+					XVAL(0xF480) = 0x00;
+					XVAL(0xF618) = 0xFF;
+					
+					//Select chip 0
+					XVAL(0xF608) = 0xFE;
+					
+					//Reset it
+					XVAL(0xF400) = 0xFF;
+					while (!(XVAL(0xF41E) & 0x01));
+					
+					//Send read chip ID command
+					XVAL(0xF400) = 0x90;
+					XVAL(0xF404) = 0x00;
+					for (i = 0; i < 6; i++)
+					{
+						usb_buffer[i] = XVAL(0xF408);
+					}
+					
+					SendData1(0x200, 0);
+					scsi_status = 0;
+					return 1;
+				}
 				case VENDOR_INFO: //get info
 				{
 					int i;
 
 					memset(usb_buffer, 0x00, 0x210);
-					for (i = 0; i < 0x200; i++)
-					{
-						usb_buffer[i] = *((BYTE __xdata *)(0x5000 + i));
-					}
-
+					usb_buffer[0x094] = 0x00;
+					usb_buffer[0x095] = 0x99;
+					usb_buffer[0x096] = 0x53;
+					usb_buffer[0x17A] = 'V';
+					usb_buffer[0x17B] = 'R';
+					usb_buffer[0x17E] = 0x23;
+					usb_buffer[0x17F] = 0x03;
 					usb_buffer[0x200] = 'I';
 					usb_buffer[0x201] = 'F';
 					SendData1(0x210, 0);

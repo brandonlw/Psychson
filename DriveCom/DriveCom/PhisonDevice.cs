@@ -149,6 +149,21 @@ namespace DriveCom
             return ret;
         }
 
+        public string GetChipID()
+        {
+            var response = SendCommand(new byte[] { 0x06, 0x56, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, 512);
+
+            return BitConverter.ToString(response, 0, 6);
+        }
+
+        public string GetFirmwareVersion()
+        {
+            var info = RequestVendorInfo();
+
+            return info[0x94] + "." + info[0x95].ToString("X02") + "." + info[0x96].ToString("X02");
+        }
+
         public ushort? GetChipType()
         {
             ushort? ret = null;
@@ -195,6 +210,17 @@ namespace DriveCom
             }
 
             return ret;
+        }
+
+        public ulong GetNumLBAs()
+        {
+            var response = SendCommand(new byte[] { 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, 8);
+            ulong ret = response[3];
+            ret |= (ulong)((ulong)(response[2] << 8) & 0x0000FF00);
+            ret |= (ulong)((ulong)(response[1] << 16) & 0x00FF0000);
+            ret |= (ulong)((ulong)(response[0] << 24) & 0xFF000000);
+
+            return ret + 1;
         }
 
         public void JumpToPRAM()

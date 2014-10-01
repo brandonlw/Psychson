@@ -4,6 +4,6 @@
     <StartArguments>/drive=E /burner=C:\Users\Brandon\Documents\GitHub\PS2251-03\BINs\BN03V104M.BIN /firmware=C:\Users\Brandon\Documents\GitHub\PS2251-03\BINs\FW03FF01V10353M.BIN</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>/drive=E /burner="C:\Users\Brandon\Documents\GitHub\PS2251-03\BINs\BN03V104M.BIN"</StartArguments>
+    <StartArguments>/drive=E</StartArguments>
   </PropertyGroup>
 </Project>

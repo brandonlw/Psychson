@@ -26,7 +26,8 @@ namespace DriveCom
             DumpFirmware,
             SetBootMode,
             SendExecutable,
-            SendFirmware
+            SendFirmware,
+            GetNumLBAs
         }
 
         public enum ExitCode
@@ -113,6 +114,11 @@ namespace DriveCom
                                 _SendFirmware();
                                 break;
                             }
+                        case Action.GetNumLBAs:
+                            {
+                                _DisplayLBAs();
+                                break;
+                            }
                         case Action.SetBootMode:
                             {
                                 _device.JumpToBootMode();
@@ -157,13 +163,18 @@ namespace DriveCom
                                     }
                                 case "mode":
                                     {
-                                        Console.WriteLine("Mode: " + _GetInfo().ToString());
+                                        _GetInfo();
                                         break;
                                     }
                                 case "info":
                                     {
                                         var data = _device.RequestVendorInfo();
                                         Console.WriteLine(string.Format("Info: {0}...", BitConverter.ToString(data, 0, 16)));
+                                        break;
+                                    }
+                                case "get_num_lbas":
+                                    {
+                                        _DisplayLBAs();
                                         break;
                                     }
                                 case "password":
@@ -311,6 +322,11 @@ namespace DriveCom
             }
         }
 
+        private static void _DisplayLBAs()
+        {
+            Console.WriteLine("Number of LBAs: 0x" + _device.GetNumLBAs().ToString("X08"));
+        }
+
         private static void _DumpFirmware(string fileName)
         {
             var address = 0;
@@ -366,6 +382,8 @@ namespace DriveCom
         {
             Console.WriteLine("Gathering information...");
             Console.WriteLine("Reported chip type: " + _device.GetChipType().GetValueOrDefault().ToString("X04"));
+            Console.WriteLine("Reported chip ID: " + _device.GetChipID());
+            Console.WriteLine("Reported firmware version: " + _device.GetFirmwareVersion());
 
             var ret = _device.GetRunMode();
             Console.WriteLine("Mode: " + ret.ToString());
