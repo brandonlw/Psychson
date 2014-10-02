@@ -82,7 +82,7 @@ Go into the `patch` directory and modify `base.c` to disable all other patches, 
 
     #define FEATURE_EXPOSE_HIDDEN_PARTITION
 
-Then modify the NUM_LBAS define to the number of logical blocks on your drive:
+Then modify the `NUM_LBAS` define to the number of logical blocks on your drive:
 
     #define NUM_LBAS  0xE6C980UL //this needs to be even! (round down)
 
