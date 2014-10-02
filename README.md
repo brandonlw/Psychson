@@ -97,7 +97,7 @@ You can now flash this file to your drive.
 After flashing, Windows may be confused, as it now only sees half of the partition it once did -- it may ask you to format the first time you view either the public or hidden halves of the drive. This is normal.
 
 ## Running Demo 3 (Password Patch)
-Go into the `patch` directory and modify `base.c` to disable all other patches, and enable the hidden partition patch:
+Go into the `patch` directory and modify `base.c` to disable all other patches, and enable the password patch:
 
     #define FEATURE_CHANGE_PASSWORD
 
