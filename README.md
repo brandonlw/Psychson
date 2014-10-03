@@ -127,4 +127,4 @@ Once it has built successfully, use DriveCom to flash the resulting file (`bin\f
 
 ## Questions? Comments? Complaints?
 
-Unfortunately this isn't the most straightforward process at the moment, so if you have questions, open an [issue](https://github.com/adamcaudill/Psychson/issues) we'll do our best to help (and update the readme/wiki).
+Unfortunately this isn't the most straightforward process at the moment, so if you have questions, open an [issue](https://github.com/adamcaudill/Psychson/issues) and we'll do our best to help (and update the readme/wiki).
