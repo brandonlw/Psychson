@@ -34,7 +34,7 @@ Run DriveCom, passing in the drive letter representing the drive you want to fla
 
 where `E` is the drive letter, `BN03V104M.BIN` is the path to the burner image, and `fw.bin` is the resulting firmware dump.
 
-Currently, only 200KB firmware images can be dumped (which is what the [Patriot 8GB Supersonic Xpress](http://bit.ly/badusb4you) drive uses).
+Currently, only 200KB firmware images can be dumped (which is what the [Patriot 8GB Supersonic Xpress](http://www.amazon.com/gp/product/B005EWB15W/) drive uses).
 
 ## Flashing Custom Firmware
 Run `DriveCom`, passing in the drive letter representing the drive you want to flash, the path of the burner image you obtained, and the path of the firmware image you want to flash:
