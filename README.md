@@ -18,6 +18,8 @@ Take note that the firmware patches have only been tested against PS2251-03 firm
 As long as you are using the correct firmware image for your controller version and NAND chip, there is no harm in downgrading to an earlier version (such as from 1.10.53).
 
 ## Getting Started
+*See [Known Supported Devices](https://github.com/adamcaudill/Psychson/wiki/Known-Supported-Devices) for information on supported devices; use on an unsupported device may cause permanent damage to the device.*
+
 To get started, you'll need to obtain a burner image, which is the 8051 executable responsible for flashing firmware to the drive.
 
 See [Obtaining a Burner Image](https://github.com/adamcaudill/Psychson/wiki/Obtaining-a-Burner-Image) on the wiki for more information.
