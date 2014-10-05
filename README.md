@@ -17,6 +17,8 @@ Take note that the firmware patches have only been tested against PS2251-03 firm
 
 As long as you are using the correct firmware image for your controller version and NAND chip, there is no harm in downgrading to an earlier version (such as from 1.10.53).
 
+**WARNING: This is expirimental software. Use on unsupported devices, or even on supported devices, may cause loss of data, or even permananent damage to devices. Use at your own risk.**
+
 ## Getting Started
 *See [Known Supported Devices](https://github.com/adamcaudill/Psychson/wiki/Known-Supported-Devices) for information on supported devices; use on an unsupported device may cause permanent damage to the device.*
 
@@ -110,6 +112,21 @@ Place the firmware image you want to patch into the `patch` directory and name i
 Go to the `patch` directory and run `build.bat`. It will produce a file at `patch\bin\fw.bin` -- this is the modified firmware image.
 
 You can now flash this file to your drive.
+
+## Running No Boot Mode Patch
+Go into the `patch` directory and modify `base.c` to disable all other patches, and enable the no boot patch:
+
+    //#define FEATURE_CHANGE_PASSWORD
+    //#define FEATURE_EXPOSE_HIDDEN_PARTITION
+    #define FEATURE_PREVENT_BOOT
+
+Place the firmware image you want to patch into the `patch` directory and name it `fw.bin`.
+
+Go to the `patch` directory and run `build.bat`. It will produce a file at `patch\bin\fw.bin` -- this is the modified firmware image.
+
+You can now flash this file to your drive. Once flashed to your device, it will no longer act on the command to jump to boot mode. To update the firmware again will require [shorting pins](https://github.com/adamcaudill/Psychson/blob/master/docs/PinsToShortUponPlugInForBootMode.jpg) on the controller. To make it impossible* to update, after flashing this patch coat the device with epoxy.
+
+* *Within reason; it may be possible to get to boot mode via an exploit or other non-standard method.*
 
 #### Converting to Mode 7
 You can run the `ModeConverterFF01.exe` application (see [Useful Links](https://github.com/adamcaudill/Psychson/wiki/Useful-Links)) to split the drive into public and secure partitions, or restore the original (mode 3) functionality.
