@@ -3,6 +3,7 @@
 
 #define FEATURE_CHANGE_PASSWORD
 //#define FEATURE_EXPOSE_HIDDEN_PARTITION
+//#define FEATURE_PREVENT_BOOT
 
 #define NUM_LBAS	0xE6EA40UL //this needs to be even! (round down)
 
@@ -12,6 +13,7 @@
 #define SCSI_06_XPOKE				0x07
 #define SCSI_06_IPEEK				0x08
 #define SCSI_06_IPOKE				0x09
+#define SCSI_06_BOOT				0xBF
 #define SCSI_START_STOP_UNIT		0x1B
 #define SCSI_READ_FORMAT_CAPACITIES	0x23
 #define SCSI_READ_CAPACITY			0x25
@@ -179,7 +181,7 @@ void HandleEndpointInterrupt(void)
 }
 */
 
-#ifdef FEATURE_EXPOSE_HIDDEN_PARTITION
+#if defined(FEATURE_EXPOSE_HIDDEN_PARTITION) || defined(FEATURE_PREVENT_BOOT)
 
 void HandleCDB(void)
 {
@@ -215,6 +217,12 @@ void HandleCDB(void)
 					SendData(1);
 					break;
 				}
+#ifdef FEATURE_PREVENT_BOOT
+				case SCSI_06_BOOT:
+				{
+					break;
+				}
+#endif
 				default:
 				{
 					__asm
@@ -224,6 +232,33 @@ void HandleCDB(void)
 			}
 			break;
 		}
+		case SCSI_READ_SECTOR: //TODO: we should handle the other READ(X) commands as well
+		{
+#ifdef FEATURE_EXPOSE_HIDDEN_PARTITION
+			//Get the passed-in LBA
+			lba = ((unsigned long)(scsi_cdb[2]) << 24) & 0xFF000000;
+			lba |= ((unsigned long)(scsi_cdb[3]) << 16) & 0xFF0000;
+			lba |= (scsi_cdb[4] << 8) & 0xFF00;
+			lba |= scsi_cdb[5];
+
+			//Shift it if necessary
+			if (IsHiddenAreaVisible())
+			{
+				lba += NUM_LBAS / 2;
+			}
+
+			//Save it
+			scsi_cdb[2] = (lba >> 24) & 0xFF;
+			scsi_cdb[3] = (lba >> 16) & 0xFF;
+			scsi_cdb[4] = (lba >> 8) & 0xFF;
+			scsi_cdb[5] = lba & 0xFF;
+#endif
+			//Let the firmware do its thing
+			__asm
+				ljmp #DEFAULT_READ_SECTOR_HANDLER
+			__endasm;
+		}
+#ifdef FEATURE_EXPOSE_HIDDEN_PARTITION
 		case SCSI_START_STOP_UNIT:
 		{
 			//Are we being stopped?
@@ -276,31 +311,6 @@ void HandleCDB(void)
 			SendData(8);
 			break;
 		}
-		case SCSI_READ_SECTOR: //TODO: we should handle the other READ(X) commands as well
-		{
-			//Get the passed-in LBA
-			lba = ((unsigned long)(scsi_cdb[2]) << 24) & 0xFF000000;
-			lba |= ((unsigned long)(scsi_cdb[3]) << 16) & 0xFF0000;
-			lba |= (scsi_cdb[4] << 8) & 0xFF00;
-			lba |= scsi_cdb[5];
-
-			//Shift it if necessary
-			if (IsHiddenAreaVisible())
-			{
-				lba += NUM_LBAS / 2;
-			}
-
-			//Save it
-			scsi_cdb[2] = (lba >> 24) & 0xFF;
-			scsi_cdb[3] = (lba >> 16) & 0xFF;
-			scsi_cdb[4] = (lba >> 8) & 0xFF;
-			scsi_cdb[5] = lba & 0xFF;
-
-			//Let the firmware do its thing
-			__asm
-				ljmp #DEFAULT_READ_SECTOR_HANDLER
-			__endasm;
-		}
 		case SCSI_WRITE_SECTOR: //TODO: we should handle the other WRITE(x) commands as well
 		{
 			//Get the passed-in LBA
@@ -326,6 +336,7 @@ void HandleCDB(void)
 				ljmp #DEFAULT_CDB_HANDLER
 			__endasm;
 		}
+#endif
 		default:
 			__asm
 				ljmp #DEFAULT_CDB_HANDLER
