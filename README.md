@@ -13,6 +13,8 @@ Releases have the following items:
 - `tools` -- these are the compiled binaries of all the tools.
 - `CFW.bin` -- this is custom firmware set up to send an embedded HID payload.
 
+[![Maintainability](https://cloud.quality-gate.com/dashboard/api/badge?projectName=ACP-BRAPSYOAD&branchName=master)](https://cloud.quality-gate.com/dashboard/branches/567122#overview)
+
 Take note that the firmware patches have only been tested against PS2251-03 firmware version _1.03.53_ (which is for an 8K eD3 NAND flash chip). They may work for others, but be careful.
 
 As long as you are using the correct firmware image for your controller version and NAND chip, there is no harm in downgrading to an earlier version (such as from 1.10.53).
